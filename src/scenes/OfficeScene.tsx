@@ -6,10 +6,10 @@ import Portals from '../components/Portals';
 import Players from '../components/Players';
 import { map, portals, players } from '../mock/scenes/office';
 
-io('http://4ab2-179-218-21-239.ngrok.io');
+io('https://gamebiris.herokuapp.com');
 export default function OfficeScene() {
     React.useEffect(() => {
-        fetch('http://4ab2-179-218-21-239.ngrok.io').then(oq => {
+        fetch('https://gamebiris.herokuapp.com').then(oq => {
             console.log('foi', oq);
         });
     }, []);
