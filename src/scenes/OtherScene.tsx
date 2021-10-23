@@ -10,7 +10,7 @@ export default function RoomScene() {
         <>
             <Map data={map} />
             <Portals data={portals} />
-            <Players data={players} />
+            <Players />
         </>
     );
 }

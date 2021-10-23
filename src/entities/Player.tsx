@@ -1,4 +1,5 @@
 import React from 'react';
+import { io } from 'socket.io-client';
 import Collider from '../@core/Collider';
 import GameObject, { GameObjectProps } from '../@core/GameObject';
 import Interactable from '../@core/Interactable';
@@ -9,13 +10,32 @@ import CharacterScript from '../components/CharacterScript';
 import PlayerScript from '../components/PlayerScript';
 import spriteData from '../spriteData';
 
-export default function Player(props: GameObjectProps) {
+const socket = io('https://gamebiris.herokuapp.com');
+
+interface GameObjectPropss extends GameObjectProps {
+    id?: number;
+}
+
+export default function Player(props: GameObjectPropss) {
+    const [x, setX] = React.useState(props.x);
+    const [y, setY] = React.useState(props.y);
+
+    socket.on('move', (o: any) => {
+        if (props.id === o.id) {
+            console.log(props.id, o.id);
+            setX(o.x);
+            setY(o.y);
+        }
+    });
+
     return (
         <>
             {props.static ? (
-                <GameObject {...props}>
-                    <Collider />
-                    <Sprite {...spriteData.player} />
+                <GameObject x={x} y={y}>
+                    {/* <Collider /> */}
+                    <CharacterScript>
+                        <Sprite {...spriteData.player} />
+                    </CharacterScript>
                 </GameObject>
             ) : (
                 <GameObject

@@ -9,7 +9,7 @@ export default function DangerScene() {
         <>
             <Map data={map} />
             <Portals data={portals} />
-            <Players data={players} />
+            <Players />
         </>
     );
 }

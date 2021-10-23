@@ -27,11 +27,11 @@ export const map = `
 `;
 
 export const players = [
-    { x: 6, y: 3 },
-    { x: 9, y: 4 },
-    { x: 13, y: 9 },
-    { x: 15, y: 6 },
-    { x: 18, y: 8 },
+    { id: 1, x: 6, y: 3 },
+    // { id: 2, x: 9, y: 4 },
+    // { x: 13, y: 9 },
+    // { x: 15, y: 6 },
+    // { x: 18, y: 8 },
 ];
 
 export const portals = [
