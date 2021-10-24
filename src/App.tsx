@@ -12,7 +12,6 @@ import DangerScene from './scenes/DangerScene';
 import soundData from './soundData';
 import spriteData from './spriteData';
 import globalStyles from './styles/global';
-import useSceneManager from './@core/useSceneManager';
 
 const styles = {
     root: (width: number, height: number) => css`
@@ -32,34 +31,73 @@ const urls = [
 
 export default function App() {
     const [width, height] = useWindowSize();
+    const [isLoading, setLoading] = useState(true);
     const [scene, setScene] = useState('office');
-    // const { setScene } = useSceneManager();
+
+    const saveLocalPlayer = (player: any) => {
+        window.sessionStorage.setItem('game@player', JSON.stringify(player));
+    };
 
     const getLocalPlayer = () => {
         const player = window.sessionStorage.getItem('game@player');
         const normalizedPlayer = JSON.parse(player);
-        console.log('getLocalPlayer', normalizedPlayer);
-
         return normalizedPlayer;
     };
 
     const getPlayer = plr => {
         axios
             // eslint-disable-next-line no-underscore-dangle
-            .get(`https://gamebiris.herokuapp.com/player/${plr._id}`)
+            .get(`${process.env.API_URL}/player/${plr._id}`)
             .then((response: any) => {
-                console.log('klkkkkkkkkkkkkkkk', response.data);
                 setScene(response.data.scene);
             })
+            .catch(() => {})
+            .finally(() => {
+                setLoading(false);
+            });
+
+        axios
+            // eslint-disable-next-line no-underscore-dangle
+            .get(`${process.env.API_URL}/player/connect/${plr._id}`)
+            .then(() => {})
             .catch(() => {})
             .finally(() => {});
     };
 
+    const createPlayer = () => {
+        function randomIntFromInterval(min, max) {
+            return Math.floor(Math.random() * (max - min + 1) + min);
+        }
+        axios
+            .post(`${process.env.API_URL}/players`, {
+                x: randomIntFromInterval(1, 9),
+                y: randomIntFromInterval(1, 9),
+                scene: 'office',
+            })
+            .then(response => {
+                saveLocalPlayer(response.data);
+                getPlayer(response.data);
+            });
+    };
+
+    // eslint-disable-next-line consistent-return
+    const configPlayer = () => {
+        const player = getLocalPlayer();
+        if (!player) {
+            return createPlayer();
+        }
+
+        getPlayer(player);
+    };
+
     useEffect(() => {
-        const localplr = getLocalPlayer();
-        localplr && getPlayer(localplr);
+        configPlayer();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    if (isLoading) {
+        return <p>Loading data ...</p>;
+    }
 
     return (
         <>

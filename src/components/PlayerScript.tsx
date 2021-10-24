@@ -34,6 +34,7 @@ export default function PlayerScript() {
         // is same position?
         if (tileUtils(nextPosition).equals(transform)) return;
 
+        console.log('aqui tbbbb', { nextPosition });
         // is already moving?
         if (!getComponent<MoveableRef>('Moveable').canMove()) return;
 

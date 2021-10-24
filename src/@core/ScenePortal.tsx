@@ -1,4 +1,5 @@
 import { useThree } from 'react-three-fiber';
+import axios from 'axios';
 import { MoveableRef, MoveDirection } from './Moveable';
 import { SceneInitEvent, SceneReadyEvent } from './Scene';
 import useComponentRegistry, { ComponentRef } from './useComponentRegistry';
@@ -51,6 +52,21 @@ export default function ScenePortal({
             setGameState(portedGameObjectKey, 'player');
             onEnter?.();
             setScene(targetScene);
+
+            const getLocalPlayer = () => {
+                const player = window.sessionStorage.getItem('game@player');
+                const normalizedPlayer = JSON.parse(player);
+                return normalizedPlayer;
+            };
+            const plr = getLocalPlayer();
+
+            axios
+                .put(`${process.env.API_URL}/players/scene`, {
+                    // eslint-disable-next-line no-underscore-dangle
+                    playerId: plr._id,
+                    scene: targetScene,
+                })
+                .then(() => {});
         },
     });
 

@@ -1,55 +1,90 @@
 import React from 'react';
 import axios from 'axios';
+import { io } from 'socket.io-client';
 
 import useSceneManager from '../@core/useSceneManager';
+import useGameObject from '../@core/useGameObject';
 import Player from '../entities/Player';
 
+const socket = io(process.env.API_URL);
+
 export default function Players() {
-    const [isLoading, setLoading] = React.useState(false);
+    const [isLoading, setLoading] = React.useState(true);
     const [data, setData] = React.useState([]);
+    const [next, setNext] = React.useState(null);
     const [currentPLayer, setCurrentPlayer] = React.useState(null);
     const { currentScene } = useSceneManager();
-    // const { isLoading, data } = useFetch('https://gamebiris.herokuapp.com/players');
+    const a = useGameObject();
+    // const { isLoading, data } = useFetch(`${process.env.API_URL}/players`);
+
+    React.useEffect(() => {
+        socket.on('connected', (o: any) => {
+            console.log('ei gente', { currentScene, o, currentPLayer });
+            if (currentScene && o && currentPLayer) {
+                console.log('ei gente 2', { currentScene, o, currentPLayer });
+                // eslint-disable-next-line no-underscore-dangle
+                if (o.scene === currentScene || o._id !== currentPLayer._id) {
+                    // eslint-disable-next-line no-underscore-dangle
+                    if (!data.some(({ _id }) => _id === o._id)) {
+                        setNext(o);
+                    }
+                }
+            }
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [data]);
+
+    React.useEffect(() => {
+        console.log('1111', data);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+    React.useEffect(() => {
+        console.log('2222', data);
+    }, [data]);
+    React.useEffect(() => {
+        console.log('3333', next);
+        if (next) {
+            const newArray = [...data, next];
+            console.log('veiooo fiu', { data, newArray, next });
+            setData(newArray);
+            setNext(null);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [next]);
 
     const saveLocalPlayer = (player: any) => {
         window.sessionStorage.setItem('game@player', JSON.stringify(player));
-        console.log('saveLocalPlayer', JSON.parse(player));
     };
 
     const getLocalPlayer = () => {
         const player = window.sessionStorage.getItem('game@player');
         const normalizedPlayer = JSON.parse(player);
-        console.log('getLocalPlayer', normalizedPlayer);
-
         return normalizedPlayer;
     };
 
     const getPlayer = plr => {
         axios
             // eslint-disable-next-line no-underscore-dangle
-            .get(`https://gamebiris.herokuapp.com/player/${plr._id}`)
+            .get(`${process.env.API_URL}/player/${plr._id}`)
             .then((response: any) => {
-                console.log(response.data);
                 setCurrentPlayer(response.data);
+                console.log({
+                    a,
+                });
             })
             .catch(() => {})
-            .finally(() => {
-                setLoading(false);
-            });
+            .finally(() => {});
     };
 
     const getPlayers = plr => {
         axios
             // eslint-disable-next-line no-underscore-dangle
-            .get(`https://gamebiris.herokuapp.com/players/${plr._id}/${currentScene}`)
+            .get(`${process.env.API_URL}/players/${plr._id}/${currentScene}`)
             .then((response: any) => {
-                console.log(response.data);
                 setData(response.data);
             })
             .catch(() => {})
-            .finally(() => {
-                setLoading(false);
-            });
+            .finally(() => {});
     };
 
     const createPlayer = () => {
@@ -57,10 +92,10 @@ export default function Players() {
             return Math.floor(Math.random() * (max - min + 1) + min);
         }
         axios
-            .post('https://gamebiris.herokuapp.com/players', {
+            .post(`${process.env.API_URL}/players`, {
                 x: randomIntFromInterval(1, 9),
                 y: randomIntFromInterval(1, 9),
-                scene: 'other',
+                scene: 'office',
             })
             .then(response => {
                 saveLocalPlayer(response.data);
@@ -85,13 +120,11 @@ export default function Players() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    if (isLoading || !currentPLayer) {
-        return <Player x={1} y={1} />;
-    }
+    console.log({ currentPLayer });
 
     return (
         <>
-            <Player x={currentPLayer.x} y={currentPLayer.y} id={currentPLayer.id} />
+            {currentPLayer ? <Player x={1} y={1} /> : <Player x={1} y={1} />}
             {data.map(({ _id, x, y }: any) => (
                 <Player x={x} y={y} key={_id} id={_id} static />
             ))}

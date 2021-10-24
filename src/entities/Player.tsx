@@ -10,9 +10,10 @@ import CharacterScript from '../components/CharacterScript';
 import PlayerScript from '../components/PlayerScript';
 import spriteData from '../spriteData';
 
-const socket = io('https://gamebiris.herokuapp.com');
+const socket = io(process.env.API_URL);
 
 interface GameObjectPropss extends GameObjectProps {
+    static?: boolean;
     id?: number;
 }
 
@@ -20,13 +21,14 @@ export default function Player(props: GameObjectPropss) {
     const [x, setX] = React.useState(props.x);
     const [y, setY] = React.useState(props.y);
 
-    socket.on('move', (o: any) => {
-        if (props.id === o.id) {
-            console.log(props.id, o.id);
-            setX(o.x);
-            setY(o.y);
-        }
-    });
+    React.useEffect(() => {
+        socket.on('move', (o: any) => {
+            if (props.id === o.id) {
+                setX(o.x);
+                setY(o.y);
+            }
+        });
+    }, [props.id]);
 
     return (
         <>

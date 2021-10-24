@@ -5,7 +5,6 @@ import { Position } from './GameObject';
 import useCollisionTest from './useCollisionTest';
 import useComponentRegistry, { ComponentRef } from './useComponentRegistry';
 import useGame from './useGame';
-import useSceneManager from './useSceneManager';
 import useGameObject from './useGameObject';
 import { PubSubEvent } from './utils/createPubSub';
 import waitForMs from './utils/waitForMs';
@@ -52,7 +51,6 @@ export default function Moveable({ isStatic = false }: Props) {
     const nextPosition = useRef({ x: transform.x, y: transform.y });
     const facingDirection = useRef<Direction>(1);
     const movingDirection = useRef<MoveDirection>([0, 0]);
-    const { currentScene } = useSceneManager();
 
     const api = useComponentRegistry<MoveableRef>('Moveable', {
         canMove(position) {
@@ -69,26 +67,22 @@ export default function Moveable({ isStatic = false }: Props) {
             canMove.current = true;
         },
         async move(targetPosition, type = 'move') {
+            console.log({ targetPosition });
             const getLocalPlayer = () => {
                 const player = window.sessionStorage.getItem('game@player');
                 const normalizedPlayer = JSON.parse(player);
-                console.log('getLocalPlayer', normalizedPlayer);
                 return normalizedPlayer;
             };
             const plr = getLocalPlayer();
 
-            console.log('⚠️', { currentScene });
             axios
-                .put('https://gamebiris.herokuapp.com/players', {
+                .put(`${process.env.API_URL}/players`, {
                     // eslint-disable-next-line no-underscore-dangle
                     playerId: plr._id,
                     x: targetPosition.x,
                     y: targetPosition.y,
-                    scene: currentScene,
                 })
-                .then(response => {
-                    console.log(response.data);
-                });
+                .then(() => {});
 
             if (isStatic) return false;
             if (!canMove.current) return false;

@@ -125,6 +125,7 @@ export default function CharacterScript({ children }: Props) {
             bounce = Math.abs(delta / sizeDivider);
             childRef.current.position.setX(bounce * dirX);
             childRef.current.position.setY(bounce);
+            // console.log('aqui óooooo', { nextPosition });
         }
     );
 
