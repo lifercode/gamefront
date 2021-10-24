@@ -9,8 +9,9 @@ import CameraFollowScript from '../components/CameraFollowScript';
 import CharacterScript from '../components/CharacterScript';
 import PlayerScript from '../components/PlayerScript';
 import spriteData from '../spriteData';
+import { API_URL } from '../config';
 
-const socket = io(process.env.API_URL);
+const socket = io(API_URL);
 
 interface GameObjectPropss extends GameObjectProps {
     static?: boolean;

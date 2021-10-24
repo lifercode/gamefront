@@ -1,9 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
-import { API_URL } from './config';
-
-process.env.API_URL = API_URL;
 
 ReactDOM.render(<App />, document.getElementById('root'));
 

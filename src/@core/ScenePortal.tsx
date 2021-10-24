@@ -8,6 +8,7 @@ import useGameEvent from './useGameEvent';
 import useGameObject from './useGameObject';
 import useInteraction from './useInteraction';
 import useSceneManager from './useSceneManager';
+import { API_URL } from '../config';
 
 export interface ScenePortalProps {
     name: string;
@@ -61,7 +62,7 @@ export default function ScenePortal({
             const plr = getLocalPlayer();
 
             axios
-                .put(`${process.env.API_URL}/players/scene`, {
+                .put(`${API_URL}/players/scene`, {
                     // eslint-disable-next-line no-underscore-dangle
                     playerId: plr._id,
                     scene: targetScene,

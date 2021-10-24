@@ -5,8 +5,9 @@ import { io } from 'socket.io-client';
 import useSceneManager from '../@core/useSceneManager';
 import useGameObject from '../@core/useGameObject';
 import Player from '../entities/Player';
+import { API_URL } from '../config';
 
-const socket = io(process.env.API_URL);
+const socket = io(API_URL);
 
 export default function Players() {
     const [isLoading, setLoading] = React.useState(true);
@@ -15,7 +16,7 @@ export default function Players() {
     const [currentPLayer, setCurrentPlayer] = React.useState(null);
     const { currentScene } = useSceneManager();
     const a = useGameObject();
-    // const { isLoading, data } = useFetch(`${process.env.API_URL}/players`);
+    // const { isLoading, data } = useFetch(`${API_URL}/players`);
 
     React.useEffect(() => {
         socket.on('connected', (o: any) => {
@@ -65,7 +66,7 @@ export default function Players() {
     const getPlayer = plr => {
         axios
             // eslint-disable-next-line no-underscore-dangle
-            .get(`${process.env.API_URL}/player/${plr._id}`)
+            .get(`${API_URL}/player/${plr._id}`)
             .then((response: any) => {
                 setCurrentPlayer(response.data);
                 console.log({
@@ -79,7 +80,7 @@ export default function Players() {
     const getPlayers = plr => {
         axios
             // eslint-disable-next-line no-underscore-dangle
-            .get(`${process.env.API_URL}/players/${plr._id}/${currentScene}`)
+            .get(`${API_URL}/players/${plr._id}/${currentScene}`)
             .then((response: any) => {
                 setData(response.data);
             })
@@ -92,7 +93,7 @@ export default function Players() {
             return Math.floor(Math.random() * (max - min + 1) + min);
         }
         axios
-            .post(`${process.env.API_URL}/players`, {
+            .post(`${API_URL}/players`, {
                 x: randomIntFromInterval(1, 9),
                 y: randomIntFromInterval(1, 9),
                 scene: 'office',

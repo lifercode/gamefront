@@ -12,6 +12,7 @@ import DangerScene from './scenes/DangerScene';
 import soundData from './soundData';
 import spriteData from './spriteData';
 import globalStyles from './styles/global';
+import { API_URL } from './config';
 
 const styles = {
     root: (width: number, height: number) => css`
@@ -47,7 +48,7 @@ export default function App() {
     const getPlayer = plr => {
         axios
             // eslint-disable-next-line no-underscore-dangle
-            .get(`${process.env.API_URL}/player/${plr._id}`)
+            .get(`${API_URL}/player/${plr._id}`)
             .then((response: any) => {
                 setScene(response.data.scene);
             })
@@ -58,7 +59,7 @@ export default function App() {
 
         axios
             // eslint-disable-next-line no-underscore-dangle
-            .get(`${process.env.API_URL}/player/connect/${plr._id}`)
+            .get(`${API_URL}/player/connect/${plr._id}`)
             .then(() => {})
             .catch(() => {})
             .finally(() => {});
@@ -69,7 +70,7 @@ export default function App() {
             return Math.floor(Math.random() * (max - min + 1) + min);
         }
         axios
-            .post(`${process.env.API_URL}/players`, {
+            .post(`${API_URL}/players`, {
                 x: randomIntFromInterval(1, 9),
                 y: randomIntFromInterval(1, 9),
                 scene: 'office',

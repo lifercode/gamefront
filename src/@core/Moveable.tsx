@@ -8,6 +8,7 @@ import useGame from './useGame';
 import useGameObject from './useGameObject';
 import { PubSubEvent } from './utils/createPubSub';
 import waitForMs from './utils/waitForMs';
+import { API_URL } from '../config';
 
 export type Direction = -1 | 0 | 1;
 export type MoveDirection = [Direction, Direction];
@@ -76,7 +77,7 @@ export default function Moveable({ isStatic = false }: Props) {
             const plr = getLocalPlayer();
 
             axios
-                .put(`${process.env.API_URL}/players`, {
+                .put(`${API_URL}/players`, {
                     // eslint-disable-next-line no-underscore-dangle
                     playerId: plr._id,
                     x: targetPosition.x,
